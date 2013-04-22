@@ -1,0 +1,382 @@
+<!doctype html>
+<html>
+  <head>
+    <link rel="stylesheet" type="text/css" href="reset.css" />
+    <!-- <link rel="stylesheet" type="text/css" href="jquery-ui.css" /> -->
+    <style>
+
+body {
+    font-family: "Helvetica", "sans-serif";
+    color: rgba(255, 255, 255, 1);
+    cursor: crosshair;
+    overflow: hidden;
+}
+
+h1, h2, h3, h4, h5 {
+    line-height: 1.15;
+    font-weight: bold;
+    /* text-shadow: 0px 0px 0.2em rgb(255, 255, 255); */
+}
+
+h1 {
+    font-size: 4em;
+}
+
+h4 {
+    font-size: 1.5em;
+}
+
+p {
+    line-height: 1.25;
+    font-size: 0.85em;
+}
+
+h4 + p {
+    margin-top: 1.5em;
+}
+
+p + p {
+    margin-top: 0.75em;
+}
+
+.disable-select {
+    user-select: none;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+}
+
+div#overlay {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}
+
+div#overlay div#title {
+    position: absolute;
+    left: 0;
+    top: 0;
+
+    /*
+    height: 7em;
+    right: 0;
+    background-image: linear-gradient(top, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7) 60%, rgba(0, 0, 0, 0));
+    background-image: -webkit-linear-gradient(top, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7) 60%, rgba(0, 0, 0, 0));
+    background-image: -moz-linear-gradient(top, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7) 60%, rgba(0, 0, 0, 0));
+    background-image: -o-linear-gradient(top, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7) 60%, rgba(0, 0, 0, 0));
+    background-image: -ms-linear-gradient(top, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7) 60%, rgba(0, 0, 0, 0));
+    */
+
+    padding: 2em;
+
+    background-color: rgba(0, 0, 0, 0.5);
+    box-shadow: 0px 0px 5em rgb(0, 0, 0);
+}
+
+div#overlay div.popover {
+    cursor: default;
+    padding: 1em;
+
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 1em;
+    background-color: rgba(0, 0, 0, 0.5);
+
+    transition-timing-function: ease;
+    -webkit-transition-timing-function: ease;
+    -moz-transition-timing-function: ease;
+    -o-transition-timing-function: ease;
+    -ms-transition-timing-function: ease;
+
+    transition-duration: 0.35s;
+    -webkit-transition-duration: 0.35s;
+    -moz-transition-duration: 0.35s;
+    -o-transition-duration: 0.35s;
+    -ms-transition-duration: 0.35s;
+}
+
+div#overlay div#options {
+    position: absolute;
+    /* XXX FIXME */
+    left: -16em;
+    bottom: 2em;
+
+    width: 15em;
+    padding-left: 3em;
+
+    transition-property: left;
+    -webkit-transition-property: left;
+    -moz-transition-property: left;
+    -o-transition-property: left;
+    -ms-transition-property: left;
+}
+
+div#overlay div#options:hover {
+    left: -2em;
+}
+
+div#overlay div#options > div {
+    width: 83%;
+}
+
+div#overlay div#options > h4 {
+    transform-origin: 0% 50%;
+    -webkit-transform-origin: 0% 50%;
+    -moz-transform-origin: 0% 50%;
+    -o-transform-origin: 0% 50%;
+    -ie-transform-origin: 0% 50%;
+
+    transform: rotate(90deg);
+    -webkit-transform: rotate(90deg);
+    -moz-transform: rotate(90deg);
+    -o-transform: rotate(90deg);
+    -ie-transform: rotate(90deg);
+
+    /* XXX FIXME */
+    position: absolute;
+    top: 0.25em;
+    right: -2.75em;
+}
+
+div#overlay div#description {
+    position: absolute;
+    right: 2em;
+    /* XXX FIXME */
+    bottom: -38em;
+    width: 35em;
+
+    padding-bottom: 3em;
+
+    transition-property: bottom;
+    -webkit-transition-property: bottom;
+    -moz-transition-property: bottom;
+    -o-transition-property: bottom;
+    -ms-transition-property: bottom;
+}
+
+div#overlay div#description:hover {
+    bottom: -2em;
+}
+
+div#mouse-shadow {
+    position: absolute;
+    width: 500px;
+    height: 500px;
+
+    background-image: -moz-radial-gradient(center center, circle contain, rgba(0, 0, 0, 1), rgba(0, 0, 0, 0))
+}
+
+.ui-slider {
+    position: relative;
+    width: 100%;
+    height: 0.4em;
+
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    border-radius: 1em;
+}
+
+.ui-slider-handle {
+    position: absolute;
+    width: 0.7em;
+    height: 0.7em;
+
+    outline: 0;
+    margin-left: -0.5em;
+    margin-top: -0.2em;
+
+    border-radius: 1em;
+    background-color: rgb(255, 255, 255);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    box-shadow: 0px 0px 10px rgb(255, 255, 255);
+}
+
+    </style>
+
+    <script type="text/javascript" src="jquery.min.js"></script>
+    <script type="text/javascript" src="jquery-ui.min.js"></script>
+    <script>
+
+$(window).scroll(function() {
+    scroll(0, 0);
+});
+
+$(window).resize(function() {
+    var $canvas = $("canvas");
+    $canvas.css("position", "absolute");
+    $canvas.css("left", 0);
+    $canvas.css("top", 0);
+    $canvas.attr("width", $(window).innerWidth());
+    $canvas.attr("height", $(window).innerHeight());
+});
+
+function setup_options() {
+    $("div#derp").slider();
+    $("div#derp1").slider();
+    $("div#derp2").slider();
+}
+
+$(document).ready(function() {
+    $(window).resize();
+
+    setup_options();
+
+    var mouse_position = {};
+    var $mouse_shadow = $("div#mouse-shadow");
+    $(document).mousemove(function(e) {
+	mouse_position = {
+	    x: e.pageX,
+	    y: e.pageY,
+	};
+
+	$mouse_shadow.css("left", e.pageX - $mouse_shadow.width() / 2);
+	$mouse_shadow.css("top", e.pageY - $mouse_shadow.height() / 2);
+    });
+
+    var canvas = $("canvas").get(0);
+    var c = canvas.getContext("2d");
+
+    var position = {
+	x: $(window).width() / 2,
+	y: $(window).height() / 2,
+    };
+
+    var max_velocity = 1000;
+    var velocity = {
+	x: max_velocity * (Math.random() - 0.5),
+	y: max_velocity * (Math.random() - 0.5),
+    };
+
+    var particles_per_ring = 45;
+    var particle_generation_radius = 50;
+    var particle_max_velocity = 100;
+
+    var max_particles = 10000;
+    var particles = [];
+    var particles_first_unused = 0;
+    for (var i = 0; i < max_particles; i++) {
+	particles.push({});
+    }
+
+    var hue = 0;
+
+    setInterval(function() {
+	var dt = 1 / 60;
+
+	hue += 2;
+
+	/*
+	position.x += velocity.x * dt;
+	position.y += velocity.y * dt;
+	*/
+
+	position.x = mouse_position.x;
+	position.y = mouse_position.y;
+
+	for (var i = 0; i < particles_first_unused; i++) {
+	    var particle = particles[i];
+	    particle.position.x += particle.velocity.x * dt;
+	    particle.position.y += particle.velocity.y * dt;
+	    particle.velocity.x *= 1.08;
+	    particle.velocity.y *= 1.08;
+
+	    if (particles_first_unused > 0 &&
+		(particle.position.x < 0 || particle.position.x > canvas.width ||
+		 particle.position.y < 0 || particle.position.y > canvas.height)) {
+		var last_particle = particles[particles_first_unused - 1];
+		var temp = particle;
+		particles[i] = last_particle;
+		particles[particles_first_unused - 1] = particle;
+		particles_first_unused--;
+	    }
+	}
+
+	if (Math.random() < 0.02 ||
+	    position.x < canvas.width / 4 || position.x > canvas.width * 3 / 4 ||
+	    position.y < canvas.height / 4 || position.y > canvas.height * 3 / 4) {
+	    velocity = {
+		x: max_velocity * (Math.random() - 0.5),
+		y: max_velocity * (Math.random() - 0.5),
+	    };
+	}
+
+	if (mouse_position != {}) {
+	    for (var i = 0; i < particles_per_ring; i++) {
+		// var angle = 2 * Math.PI / particles_per_ring * i;
+		var angle = Math.random() * 2 * Math.PI;
+
+		if (Math.random() < 0.25) {
+		    var particle = particles[particles_first_unused++];
+
+		    particle.position = {
+			x: position.x + particle_generation_radius * Math.cos(angle),
+			y: position.y + particle_generation_radius * Math.sin(angle),
+		    };
+
+		    particle.velocity = {
+			x: Math.cos(angle) * particle_max_velocity,
+			y: Math.sin(angle) * particle_max_velocity,
+		    };
+
+		    particle.color = "hsl(" + hue + ", 100%, 50%)";
+		}
+	    }
+	}
+
+	{
+	    c.clearRect(0, 0, canvas.width, canvas.height);
+
+	    c.fillStyle = "black";
+	    c.fillRect(0, 0, canvas.width, canvas.height);
+	}
+
+	for (var i = 0; i < particles_first_unused; i++) {
+	    var particle = particles[i];
+
+	    {
+		var particle_velocity = dt * Math.sqrt(particle.velocity.x * particle.velocity.x +
+						       particle.velocity.y * particle.velocity.y);
+		if (particle_velocity * 0.15 < 1) {
+		    c.lineWidth = particle_velocity * 0.15;
+		} else {
+		    c.lineWidth = 1;
+		}
+
+		c.strokeStyle = particle.color;
+
+		c.beginPath();
+		c.moveTo(particle.position.x, particle.position.y);
+		c.lineTo(particle.position.x + particle.velocity.x * dt * 2,
+			 particle.position.y + particle.velocity.y * dt * 2);
+		c.stroke();
+	    }
+	}
+    }, 1000 / 60);
+});
+
+    </script>
+  </head>
+  <body>
+    <canvas>Your browser does not support HTML5 canvas.</canvas>
+    <div id="overlay">
+      <div id="title" class="disable-select">
+	<h1>Shape<br />Through<br />Motion</h1>
+      </div>
+
+      <div id="options" class="popover">
+	<h4 class="disable-select">Options</h4>
+        <div>
+	  <div id="derp"></div>
+	  <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean eleifend, diam viverra vestibulum vestibulum, lectus risus aliquam leo, nec elementum nisl dolor vitae enim. Maecenas vel velit quis nunc dapibus laoreet quis a enim. Vivamus pellentesque bibendum quam eget placerat. Nullam eu odio mauris. Ut non ultrices mauris. Aenean libero urna, gravida vel luctus et, facilisis ut arcu. Maecenas ultricies iaculis orci, scelerisque lacinia nisi feugiat rutrum. Suspendisse pretium, nisl faucibus ullamcorper fringilla, purus metus aliquet nisl, egestas posuere mi mauris non dolor. Nulla ac neque erat. Donec pretium porttitor laoreet. Praesent fringilla tempus tristique. Proin eget est lorem, a condimentum metus. Praesent aliquet semper tortor, vitae tempor neque dignissim id.</p>
+	</div>
+      </div>
+
+      <div id="description" class="popover">
+	<h4 class="disable-select">Description</h4>
+	<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean eleifend, diam viverra vestibulum vestibulum, lectus risus aliquam leo, nec elementum nisl dolor vitae enim. Maecenas vel velit quis nunc dapibus laoreet quis a enim. Vivamus pellentesque bibendum quam eget placerat. Nullam eu odio mauris. Ut non ultrices mauris. Aenean libero urna, gravida vel luctus et, facilisis ut arcu. Maecenas ultricies iaculis orci, scelerisque lacinia nisi feugiat rutrum. Suspendisse pretium, nisl faucibus ullamcorper fringilla, purus metus aliquet nisl, egestas posuere mi mauris non dolor. Nulla ac neque erat. Donec pretium porttitor laoreet. Praesent fringilla tempus tristique. Proin eget est lorem, a condimentum metus. Praesent aliquet semper tortor, vitae tempor neque dignissim id.</p>
+	<p>Curabitur metus turpis, pellentesque nec feugiat eu, tincidunt nec sapien. Fusce fringilla, arcu ut adipiscing varius, nunc lacus eleifend eros, eu molestie purus purus eget ipsum. Nunc rhoncus ultrices molestie. In at semper eros. Duis vitae imperdiet orci. Sed facilisis blandit mauris, sit amet convallis lectus scelerisque quis. Nam scelerisque, orci eu vehicula luctus, magna libero ultrices nulla, non molestie sapien lorem in lorem. Nulla felis magna, accumsan et iaculis id, iaculis et sapien. Duis ultricies, lectus a condimentum ultrices, odio mauris facilisis ante, et egestas sem enim at mi. Phasellus malesuada dignissim sollicitudin. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Donec condimentum, dolor vel placerat posuere, enim diam mattis tortor, eu pretium mauris sem vitae sapien. Donec et eros luctus ipsum adipiscing aliquam in quis nunc. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Maecenas vitae vehicula libero. Pellentesque ultricies elementum mi ac ullamcorper.</p>
+	<p>Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Ut in tortor ac lectus mollis posuere ac sed ipsum. Aliquam erat volutpat. Curabitur mattis feugiat ipsum, in hendrerit magna pulvinar sed. Donec quam risus, consequat eget porta non, sollicitudin sed nisi. Fusce porta odio vel eros rhoncus hendrerit. Sed semper purus a elit dapibus at porttitor arcu interdum. Fusce in diam ac urna malesuada auctor. Proin sed nisl erat, eget ultricies nulla. In hac habitasse platea dictumst.</p>
+      </div>
+    </div>
+    <!--<div id="mouse-shadow" />-->
+  </body>
+</html>
